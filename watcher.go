@@ -28,41 +28,41 @@ func NewWatcher() (*Watcher, error) {
 	}, nil
 }
 
-func (this *Watcher) AddWatch(path string, mask uint32) error {
+func (w *Watcher) AddWatch(path string, mask uint32) error {
 	path = strings.TrimRight(path, "/")
-	_, ok := this.pathToWdMap[path]
+	_, ok := w.pathToWdMap[path]
 	if ok {
 		return nil
 	}
 
-	wd, err := syscall.InotifyAddWatch(this.fd, path, mask)
+	wd, err := syscall.InotifyAddWatch(w.fd, path, mask)
 	if err != nil {
 		return err
 	}
 
 	uwd := uint32(wd)
-	this.pathToWdMap[path] = uwd
-	this.wdToPathMap[uwd] = path
+	w.pathToWdMap[path] = uwd
+	w.wdToPathMap[uwd] = path
 
 	return nil
 }
 
-func (this *Watcher) RmWatch(path string) {
+func (w *Watcher) RmWatch(path string) {
 	path = strings.TrimRight(path, "/")
-	wd, ok := this.pathToWdMap[path]
+	wd, ok := w.pathToWdMap[path]
 	if !ok {
 		return
 	}
 
-	syscall.InotifyRmWatch(this.fd, wd)
-	delete(this.pathToWdMap, path)
-	delete(this.wdToPathMap, wd)
+	syscall.InotifyRmWatch(w.fd, wd)
+	delete(w.pathToWdMap, path)
+	delete(w.wdToPathMap, wd)
 }
 
-func (this *Watcher) ReadEvents() ([]*Event, error) {
+func (w *Watcher) ReadEvents() ([]*Event, error) {
 	buf := make([]byte, syscall.SizeofInotifyEvent*4096)
 
-	n, err := syscall.Read(this.fd, buf)
+	n, err := syscall.Read(w.fd, buf)
 	if n == 0 {
 		return nil, errors.New("Read 0 byte error")
 	}
@@ -79,7 +79,7 @@ func (this *Watcher) ReadEvents() ([]*Event, error) {
 			mask:   ie.Mask,
 			cookie: ie.Cookie,
 		}
-		event.Path = this.wdToPathMap[event.wd]
+		event.Path = w.wdToPathMap[event.wd]
 
 		offset += syscall.SizeofInotifyEvent
 		if ie.Len > 0 {
@@ -94,17 +94,17 @@ func (this *Watcher) ReadEvents() ([]*Event, error) {
 	return events, nil
 }
 
-func (this *Watcher) IsUnreadEvent(event *Event) bool {
-	if event.wd != this.pathToWdMap[event.Path] {
+func (w *Watcher) IsUnreadEvent(event *Event) bool {
+	if event.wd != w.pathToWdMap[event.Path] {
 		return true
 	}
 
 	return false
 }
 
-func (this *Watcher) Free() {
-	for path, _ := range this.pathToWdMap {
-		this.RmWatch(path)
+func (w *Watcher) Free() {
+	for path, _ := range w.pathToWdMap {
+		w.RmWatch(path)
 	}
-	syscall.Close(this.fd)
+	syscall.Close(w.fd)
 }

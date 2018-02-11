@@ -28,38 +28,38 @@ type Event struct {
 	Name string
 }
 
-func (this *Event) InIgnored() bool {
-	return this.mask&IN_IGNORED == IN_IGNORED
+func (e *Event) InIgnored() bool {
+	return e.mask&IN_IGNORED == IN_IGNORED
 }
 
-func (this *Event) InModify() bool {
-	return this.mask&IN_MODIFY == IN_MODIFY
+func (e *Event) InModify() bool {
+	return e.mask&IN_MODIFY == IN_MODIFY
 }
 
-func (this *Event) InAttrib() bool {
-	return this.mask&IN_ATTRIB == IN_ATTRIB
+func (e *Event) InAttrib() bool {
+	return e.mask&IN_ATTRIB == IN_ATTRIB
 }
 
-func (this *Event) InMoveSelf() bool {
-	return this.mask&IN_MOVE_SELF == IN_MOVE_SELF
+func (e *Event) InMoveSelf() bool {
+	return e.mask&IN_MOVE_SELF == IN_MOVE_SELF
 }
 
-func (this *Event) InMovedFrom() bool {
-	return this.mask&IN_MOVED_FROM == IN_MOVED_FROM
+func (e *Event) InMovedFrom() bool {
+	return e.mask&IN_MOVED_FROM == IN_MOVED_FROM
 }
 
-func (this *Event) InMovedTo() bool {
-	return this.mask&IN_MOVED_TO == IN_MOVED_TO
+func (e *Event) InMovedTo() bool {
+	return e.mask&IN_MOVED_TO == IN_MOVED_TO
 }
 
-func (this *Event) InDeleteSelf() bool {
-	return this.mask&IN_DELETE_SELF == IN_DELETE_SELF
+func (e *Event) InDeleteSelf() bool {
+	return e.mask&IN_DELETE_SELF == IN_DELETE_SELF
 }
 
-func (this *Event) InDelete() bool {
-	return this.mask&IN_DELETE == IN_DELETE
+func (e *Event) InDelete() bool {
+	return e.mask&IN_DELETE == IN_DELETE
 }
 
-func (this *Event) InCreate() bool {
-	return this.mask&IN_CREATE == IN_CREATE
+func (e *Event) InCreate() bool {
+	return e.mask&IN_CREATE == IN_CREATE
 }
